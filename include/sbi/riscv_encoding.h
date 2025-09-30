@@ -955,10 +955,15 @@
 
 #define INSN_LEN(insn)			(INSN_IS_16BIT(insn) ? 2 : 4)
 
-#if __riscv_xlen == 64
-#define LOG_REGBYTES			3
+#if defined(__CHERI_PURE_CAPABILITY__)
+#define LOG_REGBYTES_CHERI_ADD		1
 #else
-#define LOG_REGBYTES			2
+#define LOG_REGBYTES_CHERI_ADD		0
+#endif
+#if __riscv_xlen == 64
+#define LOG_REGBYTES			(3+LOG_REGBYTES_CHERI_ADD)
+#else
+#define LOG_REGBYTES			(2+LOG_REGBYTES_CHERI_ADD)
 #endif
 #define REGBYTES			(1 << LOG_REGBYTES)
 
