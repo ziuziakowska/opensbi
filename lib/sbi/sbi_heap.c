@@ -49,7 +49,7 @@ void *sbi_malloc(size_t size)
 	size += HEAP_ALLOC_ALIGN - 1;
 	size &= ~((unsigned long)HEAP_ALLOC_ALIGN - 1);
 
-	spin_lock(&hpctrl.lock);
+	//// spin_lock(&hpctrl.lock);
 
 	np = NULL;
 	sbi_list_for_each_entry(n, &hpctrl.free_space_list, head) {
@@ -84,7 +84,7 @@ void *sbi_malloc(size_t size)
 		}
 	}
 
-	spin_unlock(&hpctrl.lock);
+	//spin_unlock(&hpctrl.lock);
 
 	return ret;
 }
@@ -105,7 +105,7 @@ void sbi_free(void *ptr)
 	if (!ptr)
 		return;
 
-	spin_lock(&hpctrl.lock);
+	// spin_lock(&hpctrl.lock);
 
 	np = NULL;
 	sbi_list_for_each_entry(n, &hpctrl.used_space_list, head) {
@@ -116,7 +116,7 @@ void sbi_free(void *ptr)
 		}
 	}
 	if (!np) {
-		spin_unlock(&hpctrl.lock);
+		//spin_unlock(&hpctrl.lock);
 		return;
 	}
 
@@ -143,7 +143,7 @@ void sbi_free(void *ptr)
 	if (np)
 		sbi_list_add_tail(&np->head, &hpctrl.free_space_list);
 
-	spin_unlock(&hpctrl.lock);
+	//spin_unlock(&hpctrl.lock);
 }
 
 unsigned long sbi_heap_free_space(void)
@@ -151,10 +151,10 @@ unsigned long sbi_heap_free_space(void)
 	struct heap_node *n;
 	unsigned long ret = 0;
 
-	spin_lock(&hpctrl.lock);
+	//// spin_lock(&hpctrl.lock);
 	sbi_list_for_each_entry(n, &hpctrl.free_space_list, head)
 		ret += n->size;
-	spin_unlock(&hpctrl.lock);
+	//spin_unlock(&hpctrl.lock);
 
 	return ret;
 }
@@ -183,7 +183,7 @@ int sbi_heap_init(struct sbi_scratch *scratch)
 		return SBI_EINVAL;
 
 	/* Initialize heap control */
-	SPIN_LOCK_INIT(hpctrl.lock);
+	//SPIN_LOCK_INIT(hpctrl.lock);
 #if defined(__CHERI_PURE_CAPABILITY__)
 	hpctrl.base =
 		(uintptr_t)cheri_build_cap_rw(scratch->fw_start + scratch->fw_heap_offset,

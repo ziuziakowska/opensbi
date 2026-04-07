@@ -18,7 +18,7 @@ void sbi_fifo_init(struct sbi_fifo *fifo, void *queue_mem, u16 entries,
 	fifo->queue	  = queue_mem;
 	fifo->num_entries = entries;
 	fifo->entry_size  = entry_size;
-	SPIN_LOCK_INIT(fifo->qlock);
+	// SPIN_LOCK_INIT(fifo->qlock);
 	fifo->avail = fifo->tail = 0;
 	sbi_memset(fifo->queue, 0, (size_t)entries * entry_size);
 }
@@ -36,9 +36,9 @@ u16 sbi_fifo_avail(struct sbi_fifo *fifo)
 	if (!fifo)
 		return 0;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 	ret = fifo->avail;
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return ret;
 }
@@ -50,9 +50,9 @@ int sbi_fifo_is_full(struct sbi_fifo *fifo)
 	if (!fifo)
 		return SBI_EINVAL;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 	ret = __sbi_fifo_is_full(fifo);
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return ret;
 }
@@ -85,9 +85,9 @@ int sbi_fifo_is_empty(struct sbi_fifo *fifo)
 	if (!fifo)
 		return SBI_EINVAL;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 	ret = __sbi_fifo_is_empty(fifo);
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return ret;
 }
@@ -107,9 +107,9 @@ bool sbi_fifo_reset(struct sbi_fifo *fifo)
 	if (!fifo)
 		return false;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 	__sbi_fifo_reset(fifo);
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return true;
 }
@@ -131,10 +131,10 @@ int sbi_fifo_inplace_update(struct sbi_fifo *fifo, void *in,
 	if (!fifo || !in)
 		return ret;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 
 	if (__sbi_fifo_is_empty(fifo)) {
-		spin_unlock(&fifo->qlock);
+		// spin_unlock(&fifo->qlock);
 		return ret;
 	}
 
@@ -149,7 +149,7 @@ int sbi_fifo_inplace_update(struct sbi_fifo *fifo, void *in,
 			break;
 		}
 	}
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return ret;
 }
@@ -159,15 +159,15 @@ int sbi_fifo_enqueue(struct sbi_fifo *fifo, void *data)
 	if (!fifo || !data)
 		return SBI_EINVAL;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 
 	if (__sbi_fifo_is_full(fifo)) {
-		spin_unlock(&fifo->qlock);
+		// spin_unlock(&fifo->qlock);
 		return SBI_ENOSPC;
 	}
 	__sbi_fifo_enqueue(fifo, data);
 
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return 0;
 }
@@ -177,10 +177,10 @@ int sbi_fifo_dequeue(struct sbi_fifo *fifo, void *data)
 	if (!fifo || !data)
 		return SBI_EINVAL;
 
-	spin_lock(&fifo->qlock);
+	// spin_lock(&fifo->qlock);
 
 	if (__sbi_fifo_is_empty(fifo)) {
-		spin_unlock(&fifo->qlock);
+		// spin_unlock(&fifo->qlock);
 		return SBI_ENOENT;
 	}
 
@@ -192,7 +192,7 @@ int sbi_fifo_dequeue(struct sbi_fifo *fifo, void *data)
 	if (fifo->tail >= fifo->num_entries)
 		fifo->tail = 0;
 
-	spin_unlock(&fifo->qlock);
+	// spin_unlock(&fifo->qlock);
 
 	return 0;
 }

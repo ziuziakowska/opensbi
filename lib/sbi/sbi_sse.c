@@ -216,7 +216,8 @@ static void sse_enabled_event_lock(struct sbi_sse_event *e)
 	struct sse_hart_state *shs;
 
 	shs = sse_get_hart_state(e);
-	spin_lock(&shs->enabled_event_lock);
+	(void)shs;
+	// spin_lock(&shs->enabled_event_lock);
 }
 
 /**
@@ -227,7 +228,8 @@ static void sse_enabled_event_unlock(struct sbi_sse_event *e)
 	struct sse_hart_state *shs;
 
 	shs = sse_get_hart_state(e);
-	spin_unlock(&shs->enabled_event_lock);
+	(void)shs;
+	// spin_unlock(&shs->enabled_event_lock);
 }
 
 static void sse_event_set_state(struct sbi_sse_event *e,
@@ -247,7 +249,7 @@ static struct sbi_sse_event *sse_event_get(uint32_t event_id)
 		for (i = 0; i < global_event_count; i++) {
 			e = &global_events[i].event;
 			if (e->event_id == event_id) {
-				spin_lock(&global_events[i].lock);
+				// spin_lock(&global_events[i].lock);
 				return e;
 			}
 		}
@@ -271,7 +273,8 @@ static void sse_event_put(struct sbi_sse_event *e)
 		return;
 
 	ge = sse_get_global_event(e);
-	spin_unlock(&ge->lock);
+	(void)ge;
+	// spin_unlock(&ge->lock);
 }
 
 static void sse_event_remove_from_list(struct sbi_sse_event *e)
@@ -609,7 +612,7 @@ void sbi_sse_process_pending_events(struct sbi_trap_regs *regs)
 	struct sbi_sse_event *e;
 	struct sse_hart_state *state = sse_thishart_state_ptr();
 
-	spin_lock(&state->enabled_event_lock);
+	// spin_lock(&state->enabled_event_lock);
 
 	sbi_list_for_each_entry(e, &state->enabled_event_list, node) {
 		ret = sse_event_check_inject(e, regs);
@@ -618,7 +621,8 @@ void sbi_sse_process_pending_events(struct sbi_trap_regs *regs)
 	}
 
 out:
-	spin_unlock(&state->enabled_event_lock);
+	// spin_unlock(&state->enabled_event_lock);
+	;
 }
 
 static int sse_event_set_pending(struct sbi_sse_event *e)
@@ -756,7 +760,7 @@ int sbi_sse_complete(struct sbi_trap_regs *regs, struct sbi_ecall_return *out)
 	struct sbi_sse_event *tmp;
 	struct sse_hart_state *state = sse_thishart_state_ptr();
 
-	spin_lock(&state->enabled_event_lock);
+	// spin_lock(&state->enabled_event_lock);
 	sbi_list_for_each_entry(tmp, &state->enabled_event_list, node) {
 		/*
 		 * List of event is ordered by priority, first one running is
@@ -767,7 +771,7 @@ int sbi_sse_complete(struct sbi_trap_regs *regs, struct sbi_ecall_return *out)
 			break;
 		}
 	}
-	spin_unlock(&state->enabled_event_lock);
+	// spin_unlock(&state->enabled_event_lock);
 
 	return ret;
 }

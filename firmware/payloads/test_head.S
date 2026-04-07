@@ -30,7 +30,8 @@ _start:
 	/* Pick one hart to run the main boot sequence */
 	PC_PTR_L	PREG(a3), _hart_lottery
 	li	a2, 1
-	amoadd.w a3, a2, (PREG(a3))
+	li	a3, 0
+	/* amoadd.w a3, a2, (PREG(a3)) */
 	bnez	a3, _start_hang
 
 	/* Save a0 and a1 */

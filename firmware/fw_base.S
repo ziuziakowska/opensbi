@@ -80,7 +80,8 @@ _try_lottery:
 	/* Jump to relocation wait loop if we don't get relocation lottery */
 	PC_PTR_L	PREG(a6), _boot_status
 	li	a7, BOOT_STATUS_LOTTERY_DONE
-	amoswap.w a6, a7, (PREG(a6))
+	li  a6, 0
+	/* amoswap.w a6, a7, (PREG(a6)) */ /* workaround */
 	bnez	a6, _wait_for_boot_hart
 
 	/* relocate the global table content */
@@ -912,4 +913,3 @@ cheri_infinite_cap:
 	RISCV_PTR 0x0
 	.size cheri_infinite_cap, . - cheri_infinite_cap
 #endif
-

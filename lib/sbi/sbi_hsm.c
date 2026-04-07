@@ -29,7 +29,8 @@
 
 #define __sbi_hsm_hart_change_state(hdata, oldstate, newstate)		\
 ({									\
-	long state = atomic_cmpxchg(&(hdata)->state, oldstate, newstate); \
+	long state = hdata->state.counter; \
+	hdata->state.counter = newstate; /* long state = atomic_cmpxchg(&(hdata)->state, oldstate, newstate); */ \
 	if (state != (oldstate))					\
 		sbi_printf("%s: ERR: The hart is in invalid state [%lu]\n", \
 			   __func__, state);				\
@@ -105,7 +106,8 @@ static bool hsm_start_ticket_acquire(struct sbi_hsm_data *hdata)
 static void hsm_start_ticket_release(struct sbi_hsm_data *hdata)
 {
 	RISCV_FENCE(rw, w);
-	atomic_write(&hdata->start_ticket, 0);
+	hdata->start_ticket.counter = 0;
+	//atomic_write(&hdata->start_ticket, 0);
 }
 
 /**

@@ -18,7 +18,7 @@ u32 last_hartindex_having_scratch = 0;
 u32 hartindex_to_hartid_table[SBI_HARTMASK_MAX_BITS + 1] = { -1U };
 struct sbi_scratch *hartindex_to_scratch_table[SBI_HARTMASK_MAX_BITS + 1] = { 0 };
 
-static spinlock_t extra_lock = SPIN_LOCK_INITIALIZER;
+//static spinlock_t extra_lock = SPIN_LOCK_INITIALIZER;
 static unsigned long extra_offset = SBI_SCRATCH_EXTRA_SPACE_OFFSET;
 
 u32 sbi_hartid_to_hartindex(u32 hartid)
@@ -73,7 +73,7 @@ unsigned long sbi_scratch_alloc_offset(unsigned long size)
 	size += __SIZEOF_POINTER__ - 1;
 	size &= ~((unsigned long)__SIZEOF_POINTER__ - 1);
 
-	spin_lock(&extra_lock);
+	//spin_lock(&extra_lock);
 
 	if (SBI_SCRATCH_SIZE < (extra_offset + size))
 		goto done;
@@ -82,7 +82,7 @@ unsigned long sbi_scratch_alloc_offset(unsigned long size)
 	extra_offset += size;
 
 done:
-	spin_unlock(&extra_lock);
+	//spin_unlock(&extra_lock);
 
 	if (ret) {
 		for (i = 0; i <= sbi_scratch_last_hartindex(); i++) {
@@ -113,9 +113,9 @@ unsigned long sbi_scratch_used_space(void)
 {
 	unsigned long ret = 0;
 
-	spin_lock(&extra_lock);
+	//spin_lock(&extra_lock);
 	ret = extra_offset;
-	spin_unlock(&extra_lock);
+	//spin_unlock(&extra_lock);
 
 	return ret;
 }

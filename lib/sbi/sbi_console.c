@@ -20,7 +20,7 @@
 static const struct sbi_console_device *console_dev = NULL;
 static char console_tbuf[CONSOLE_TBUF_MAX];
 static u32 console_tbuf_len;
-static spinlock_t console_out_lock	       = SPIN_LOCK_INITIALIZER;
+//static spinlock_t console_out_lock	       = SPIN_LOCK_INITIALIZER;
 
 bool sbi_isprintable(char c)
 {
@@ -73,18 +73,18 @@ void sbi_puts(const char *str)
 {
 	unsigned long len = sbi_strlen(str);
 
-	spin_lock(&console_out_lock);
+	//spin_lock(&console_out_lock);
 	nputs_all(str, len);
-	spin_unlock(&console_out_lock);
+	//spin_unlock(&console_out_lock);
 }
 
 unsigned long sbi_nputs(const char *str, unsigned long len)
 {
 	unsigned long ret;
 
-	spin_lock(&console_out_lock);
+	//spin_lock(&console_out_lock);
 	ret = nputs(str, len);
-	spin_unlock(&console_out_lock);
+	//spin_unlock(&console_out_lock);
 
 	return ret;
 }
@@ -600,11 +600,11 @@ int sbi_printf(const char *format, ...)
 	va_list args;
 	int retval;
 
-	spin_lock(&console_out_lock);
+	//spin_lock(&console_out_lock);
 	va_start(args, format);
 	retval = print(NULL, NULL, format, args);
 	va_end(args);
-	spin_unlock(&console_out_lock);
+	//spin_unlock(&console_out_lock);
 
 	return retval;
 }
@@ -617,9 +617,9 @@ int sbi_dprintf(const char *format, ...)
 
 	va_start(args, format);
 	if (scratch->options & SBI_SCRATCH_DEBUG_PRINTS) {
-		spin_lock(&console_out_lock);
+		//spin_lock(&console_out_lock);
 		retval = print(NULL, NULL, format, args);
-		spin_unlock(&console_out_lock);
+		//spin_unlock(&console_out_lock);
 	}
 	va_end(args);
 
@@ -630,11 +630,11 @@ void sbi_panic(const char *format, ...)
 {
 	va_list args;
 
-	spin_lock(&console_out_lock);
+	//spin_lock(&console_out_lock);
 	va_start(args, format);
 	print(NULL, NULL, format, args);
 	va_end(args);
-	spin_unlock(&console_out_lock);
+	//spin_unlock(&console_out_lock);
 
 	sbi_hart_hang();
 }

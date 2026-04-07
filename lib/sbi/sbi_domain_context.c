@@ -34,15 +34,15 @@ static void switch_to_next_domain_context(struct sbi_context *ctx,
 	unsigned int pmp_count = sbi_hart_pmp_count(scratch);
 
 	/* Assign current hart to target domain */
-	spin_lock(&current_dom->assigned_harts_lock);
+	//spin_lock(&current_dom->assigned_harts_lock);
 	sbi_hartmask_clear_hartindex(hartindex, &current_dom->assigned_harts);
-	spin_unlock(&current_dom->assigned_harts_lock);
+	//spin_unlock(&current_dom->assigned_harts_lock);
 
 	sbi_update_hartindex_to_domain(hartindex, target_dom);
 
-	spin_lock(&target_dom->assigned_harts_lock);
+	//spin_lock(&target_dom->assigned_harts_lock);
 	sbi_hartmask_set_hartindex(hartindex, &target_dom->assigned_harts);
-	spin_unlock(&target_dom->assigned_harts_lock);
+	//spin_unlock(&target_dom->assigned_harts_lock);
 
 	/* Reconfigure PMP settings for the new domain */
 	for (int i = 0; i < pmp_count; i++) {
